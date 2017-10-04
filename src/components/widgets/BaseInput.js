@@ -31,6 +31,7 @@ function BaseInput(props) {
       value={value == null ? "" : value}
       {...inputProps}
       onChange={_onChange}
+      onInput={(process.env.NODE_ENV === 'testing') ? _onChange : () => {}}
       onBlur={onBlur && (event => onBlur(inputProps.id, event.target.value))}
       onFocus={onFocus && (event => onFocus(inputProps.id, event.target.value))}
     />
