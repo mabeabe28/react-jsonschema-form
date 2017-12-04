@@ -109,7 +109,11 @@ export default function validateFormData(
   customValidate,
   transformErrors
 ) {
-  let { errors } = jsonValidate(formData, schema);
+  // XXX Remove fields with empty-string values
+  // Otherwise will try to apply validation rules to empty fields
+  let filteredData = filterEmptyValues(formData);
+
+  let { errors } = jsonValidate(filteredData, schema);
   if (typeof transformErrors === "function") {
     errors = transformErrors(errors);
   }
@@ -119,7 +123,10 @@ export default function validateFormData(
     return { errors, errorSchema };
   }
 
-  const errorHandler = customValidate(formData, createErrorHandler(formData));
+  const errorHandler = customValidate(
+    filteredData,
+    createErrorHandler(filteredData)
+  );
   const userErrorSchema = unwrapErrorHandler(errorHandler);
   const newErrorSchema = mergeObjects(errorSchema, userErrorSchema, true);
   // XXX: The errors list produced is not fully compliant with the format
@@ -128,4 +135,22 @@ export default function validateFormData(
   const newErrors = toErrorList(newErrorSchema);
 
   return { errors: newErrors, errorSchema: newErrorSchema };
+}
+
+function filterEmptyValues(data) {
+  let filtered = {};
+  for (var prop in data) {
+    if (data.hasOwnProperty(prop)) {
+      // recurse if object
+      if (typeof data[prop] === "object") {
+        filtered[prop] = filterEmptyValues(data[prop]);
+        // otherwise just check for empty strings
+      } else {
+        if (data[prop] !== "") {
+          filtered[prop] = data[prop];
+        }
+      }
+    }
+  }
+  return filtered;
 }

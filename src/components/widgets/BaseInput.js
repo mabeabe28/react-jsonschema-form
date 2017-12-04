@@ -20,7 +20,8 @@ function BaseInput(props) {
 
   inputProps.type = options.inputType || inputProps.type || "text";
   const _onChange = ({ target: { value } }) => {
-    return props.onChange(value === "" ? options.emptyValue : value);
+    return props.onChange(value);
+    // return props.onChange(value === "" ? options.emptyValue : value);
   };
   return (
     <input
@@ -31,7 +32,7 @@ function BaseInput(props) {
       value={value == null ? "" : value}
       {...inputProps}
       onChange={_onChange}
-      onInput={(process.env.NODE_ENV === 'testing') ? _onChange : () => {}}
+      onInput={process.env.NODE_ENV === "testing" ? _onChange : () => {}}
       onBlur={onBlur && (event => onBlur(inputProps.id, event.target.value))}
       onFocus={onFocus && (event => onFocus(inputProps.id, event.target.value))}
     />
