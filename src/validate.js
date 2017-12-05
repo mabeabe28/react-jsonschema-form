@@ -137,16 +137,22 @@ export default function validateFormData(
   return { errors: newErrors, errorSchema: newErrorSchema };
 }
 
-function filterEmptyValues(data) {
-  let filtered = {};
+export function filterEmptyValues(data, schema) {
+  var filtered = {};
   for (var prop in data) {
     if (data.hasOwnProperty(prop)) {
       // recurse if object
-      if (typeof data[prop] === "object") {
-        filtered[prop] = filterEmptyValues(data[prop]);
+      if (typeof data[prop] === "object" && schema["properties"]) {
+        filtered[prop] = filterEmptyValues(
+          data[prop],
+          schema["properties"][prop]
+        );
         // otherwise just check for empty strings
       } else {
-        if (data[prop] !== "") {
+        if (
+          data[prop] !== "" ||
+          (schema["required"] && schema["required"].includes(prop))
+        ) {
           filtered[prop] = data[prop];
         }
       }
