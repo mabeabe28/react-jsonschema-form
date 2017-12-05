@@ -111,7 +111,7 @@ export default function validateFormData(
 ) {
   // XXX Remove fields with empty-string values
   // Otherwise will try to apply validation rules to empty fields
-  let filteredData = filterEmptyValues(formData);
+  let filteredData = filterEmptyValues(formData, schema);
 
   let { errors } = jsonValidate(filteredData, schema);
   if (typeof transformErrors === "function") {
