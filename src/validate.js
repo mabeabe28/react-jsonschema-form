@@ -145,6 +145,7 @@ export function filterEmptyValues(data, schema) {
       if (
         typeof data[prop] === "object" &&
         !(data[prop] instanceof Array) &&
+        schema &&
         schema["properties"]
       ) {
         filtered[prop] = filterEmptyValues(
