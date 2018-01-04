@@ -1186,5 +1186,68 @@ describe("Validation", () => {
         );
       });
     });
+
+    describe("Filter correctly for multiple uploads", () => {
+      const data = {
+        form: {
+          uiSchema: {
+            pressUploads: {
+              "ui:field": "multipleUpload",
+              "ui:options": {
+                uploadType: 5,
+                url:
+                  "https://app.filespin.io/api/v1/upload?upload_key=0e9dcb4cc95b4f448c3e8013f23aaef9&picker_host=app.filespin.io",
+                types: ["image/jpeg", "image/png", "application/pdf"],
+                description:
+                  "<h3>General Terms</h3><p>eurobest press accreditation is strictly reserved for editorial team members (editors, journalists, reporters, photographers, broadcasters) and full-time freelancers (with evidence of at least six months experience with the publication).</p><p>Please ensure that you can provide the following:</p><ul><li>Copy of valid 2016/2017 press card</li><li>Commissioning letter on company letterhead outlining intended coverage (must be signed by and include the direct contact details for Editor-in-Chief)</li><li>Recent by-lined coverage of industry related articles (no more than one month old - returning media should also provide 2016 Festival coverage)</li><li>Copy of editorial masthead listing your name as an editorial contributor or link to an official author page</li><li>Acceptance of our Code of Conduct</li><li>Links to online presence: LinkedIn, Twitter, Personal website</li></ul>",
+                method: "POST",
+              },
+            },
+          },
+          schema: {
+            required: [],
+            properties: {
+              pressUploads: {
+                title: "Document Upload",
+                type: "array",
+                minItems: 1,
+                maxLength: 3,
+                items: {
+                  properties: {
+                    filename: {
+                      type: "string",
+                    },
+                    path: {
+                      type: "string",
+                    },
+                    id: {
+                      type: "string",
+                    },
+                  },
+                  type: "object",
+                },
+              },
+            },
+            type: "object",
+          },
+        },
+        status: "incomplete",
+        schemaType: "pressUploads",
+        id: "E15D5D10-7BA7-E711-99AF-22000A4AA935",
+        userData: {
+          pressUploads: [],
+        },
+      };
+
+      const expected = {
+        pressUploads: [],
+      };
+
+      it("should return expected user data", () => {
+        expect(filterEmptyValues(data.userData, data.form.schema)).eql(
+          expected
+        );
+      });
+    });
   });
 });

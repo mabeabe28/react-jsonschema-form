@@ -142,7 +142,11 @@ export function filterEmptyValues(data, schema) {
   for (var prop in data) {
     if (data.hasOwnProperty(prop)) {
       // recurse if object
-      if (typeof data[prop] === "object" && schema["properties"]) {
+      if (
+        typeof data[prop] === "object" &&
+        !(data[prop] instanceof Array) &&
+        schema["properties"]
+      ) {
         filtered[prop] = filterEmptyValues(
           data[prop],
           schema["properties"][prop]
